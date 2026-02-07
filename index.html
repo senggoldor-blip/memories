@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereal - Cerita Kita</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050a15; 
+            --text-gold: #efbf3b;
+            --gold-glow: rgba(239, 191, 59, 0.8);
+            --text-white: #f0f0f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            font-family: 'Cormorant Garamond', serif;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- Cover Page --- */
+        #cover {
+            height: 100svh; width: 100%; position: fixed; top: 0; left: 0;
+            background: linear-gradient(rgba(5, 10, 21, 0.6), rgba(5, 10, 21, 0.8)), url('bg.jpg');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 100;
+            transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+            text-align: center; padding: 20px;
+        }
+
+        .cover-intro { font-size: 1.3rem; font-style: italic; margin-bottom: 10px; letter-spacing: 2px; }
+        .cover-main-text { font-size: 2.8rem; color: var(--text-gold); margin-bottom: 35px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+
+        .open-btn {
+            background: rgba(239, 191, 59, 0.1); color: var(--text-gold); 
+            border: 1.5px solid var(--text-gold); padding: 15px 50px; 
+            font-size: 1.1rem; cursor: pointer; letter-spacing: 5px; 
+            transition: 0.4s; backdrop-filter: blur(8px);
+        }
+
+        .open-btn:hover { background: var(--text-gold); color: #050a15; box-shadow: 0 0 20px var(--gold-glow); }
+
+        /* --- Main Content --- */
+        #main-content { opacity: 0; transition: opacity 2s ease; }
+
+        .section { padding: 40px 25px; text-align: center; }
+        .hero-title { font-size: 3.5rem; color: var(--text-gold); font-style: italic; margin-top: 20px; }
+
+        /* --- Typewriter Section --- */
+        .typewriter-box {
+            padding: 20px 30px; text-align: center;
+            font-size: 1.6rem; color: var(--text-gold);
+            font-style: italic; min-height: 140px; line-height: 1.5;
+        }
+
+        /* --- Flower Sparkling Section --- */
+        .flower-wrapper {
+            position: relative; height: 320px; width: 100%;
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 40px;
+        }
+
+        #flower-container { position: relative; width: 250px; height: 250px; }
+
+        .dot {
+            position: absolute; width: 4px; height: 4px;
+            background: var(--text-gold); border-radius: 50%;
+            box-shadow: 0 0 10px var(--text-gold);
+            opacity: 0; transform: scale(0);
+            animation: popIn 1.5s forwards ease-out, sparkle 2s infinite alternate;
+        }
+
+        @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+        
+        @keyframes sparkle {
+            0% { filter: brightness(1); box-shadow: 0 0 5px var(--text-gold); }
+            100% { filter: brightness(1.8); box-shadow: 0 0 15px white; }
+        }
+
+        /* --- Gallery --- */
+        .gallery-container {
+            padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
+        }
+
+        .photo {
+            width: 100%; aspect-ratio: 1/1; background: #0a1122;
+            overflow: hidden; border: 1px solid var(--text-gold);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .photo img { width: 100%; height: 100%; object-fit: cover; }
+
+        footer {
+            padding: 60px 20px 40px; text-align: center;
+            font-size: 0.8rem; letter-spacing: 4px; opacity: 0.6; color: var(--text-gold);
+        }
+
+        .cover-opened { transform: translateY(-100%); }
+        .cursor { display: inline-block; width: 3px; background: var(--text-gold); margin-left: 5px; animation: blink 0.8s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <audio id="myAudio" loop preload="auto">
+        <source src="lagu.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="cover">
+        <p class="cover-intro">Maret 2025 — Hari ini</p>
+        <h2 class="cover-main-text">Perjalanan Kita Dimulai</h2>
+        <button class="open-btn" onclick="openWebsite()">BUKA LEMBARAN BARU</button>
+    </div>
+
+    <div id="main-content">
+        <section class="section">
+            <h1 class="hero-title">Abadi.</h1>
+            <p style="margin-top: 10px; letter-spacing: 2px; opacity: 0.8;">SEJAK MARET 2025</p>
+        </section>
+
+        <div class="typewriter-box">
+            <span id="typewriter-text"></span><span class="cursor">|</span>
+        </div>
+
+        <div class="flower-wrapper">
+            <div id="flower-container"></div>
+        </div>
+
+        <div class="gallery-container">
+            <div class="photo"><img src="foto 1.jpeg" alt="Kenangan 1"></div>
+            <div class="photo"><img src="foto 2.jpeg" alt="Kenangan 2"></div>
+            <div class="photo"><img src="foto 3.jpeg" alt="Kenangan 3"></div>
+            <div class="photo"><img src="foto 4.jpeg" alt="Kenangan 4"></div>
+        </div>
+
+        <footer>
+            TERJAGA DALAM DOA &bull; 2026
+        </footer>
+    </div>
+
+    <script>
+        function createFlower() {
+            const container = document.getElementById('flower-container');
+            const totalDots = 150; 
+            const n = 6; 
+            const d = 1;
+            const k = n / d;
+            
+            for (let i = 0; i < totalDots; i++) {
+                const angle = (i / totalDots) * Math.PI * 2;
+                const r = 110 * Math.cos(k * angle);
+                const x = 125 + r * Math.cos(angle);
+                const y = 125 + r * Math.sin(angle);
+                
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                dot.style.left = x + 'px';
+                dot.style.top = y + 'px';
+                dot.style.animationDelay = (i * 0.02) + 's, ' + (Math.random() * 2) + 's';
+                container.appendChild(dot);
+            }
+        }
+
+        const message = "Terima kasih sudah tetap di sini, mekar bersamaku melalui setiap musim. Mungkin kini memulai dari 0 bahkan dari minus dan semoga kedepannya tetap bersama. Website ini adalah janji bahwa setiap detik bersamamu adalah abadi.";
+        let i = 0;
+
+        function typeWriter() {
+            if (i < message.length) {
+                document.getElementById("typewriter-text").innerHTML += message.charAt(i);
+                i++;
+                setTimeout(typeWriter, 70);
+            }
+        }
+
+        function openWebsite() {
+            const audio = document.getElementById("myAudio");
+            
+            // Memastikan musik diputar dari detik 0
+            audio.currentTime = 0; 
+            audio.play().then(() => {
+                console.log("Musik diputar dari awal.");
+            }).catch(e => {
+                console.log("Play blocked: ", e);
+            });
+
+            document.getElementById("cover").classList.add("cover-opened");
+            document.getElementById("main-content").style.opacity = "1";
+            document.body.style.overflow = "auto";
+
+            // Jalankan typewriter
+            setTimeout(typeWriter, 1000);
+            // Munculkan bunga setelah teks mulai jalan sedikit
+            setTimeout(createFlower, 2500);
+        }
+    </script>
+</body>
+</html>

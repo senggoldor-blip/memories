@@ -59,28 +59,35 @@
             font-style: italic; min-height: 140px; line-height: 1.5;
         }
 
-        /* --- Flower Sparkling Section --- */
+        /* --- New Lightweight SVG Flower --- */
         .flower-wrapper {
-            position: relative; height: 320px; width: 100%;
             display: flex; justify-content: center; align-items: center;
-            margin-bottom: 40px;
+            margin-bottom: 40px; opacity: 0; transform: scale(0.8);
+            transition: all 2s ease;
         }
 
-        #flower-container { position: relative; width: 250px; height: 250px; }
+        .flower-wrapper.visible { opacity: 1; transform: scale(1); }
 
-        .dot {
-            position: absolute; width: 4px; height: 4px;
-            background: var(--text-gold); border-radius: 50%;
-            box-shadow: 0 0 10px var(--text-gold);
-            opacity: 0; transform: scale(0);
-            animation: popIn 1.5s forwards ease-out, sparkle 2s infinite alternate;
+        .flower-svg {
+            width: 150px; height: 150px;
+            fill: none; stroke: var(--text-gold);
+            stroke-width: 1.5; stroke-linecap: round;
+            filter: drop-shadow(0 0 8px var(--gold-glow));
+            animation: rotateFlower 20s linear infinite;
         }
 
-        @keyframes popIn { to { opacity: 1; transform: scale(1); } }
-        
-        @keyframes sparkle {
-            0% { filter: brightness(1); box-shadow: 0 0 5px var(--text-gold); }
-            100% { filter: brightness(1.8); box-shadow: 0 0 15px white; }
+        @keyframes rotateFlower {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .petal {
+            animation: sparkleFlower 3s infinite alternate;
+        }
+
+        @keyframes sparkleFlower {
+            0% { opacity: 0.6; stroke-width: 1; }
+            100% { opacity: 1; stroke-width: 2.5; filter: drop-shadow(0 0 12px #fff); }
         }
 
         /* --- Gallery --- */
@@ -128,8 +135,20 @@
             <span id="typewriter-text"></span><span class="cursor">|</span>
         </div>
 
-        <div class="flower-wrapper">
-            <div id="flower-container"></div>
+        <div class="flower-wrapper" id="flower-target">
+            <svg class="flower-svg" viewBox="0 0 100 100">
+                <g class="petal">
+                    <path d="M50 50 Q70 10 50 10 Q30 10 50 50" />
+                    <path d="M50 50 Q90 30 90 50 Q90 70 50 50" />
+                    <path d="M50 50 Q70 90 50 90 Q30 90 50 50" />
+                    <path d="M50 50 Q10 70 10 50 Q10 30 50 50" />
+                    <path d="M50 50 Q80 15 85 40 Q50 50 50 50" transform="rotate(45 50 50)" />
+                    <path d="M50 50 Q80 15 85 40 Q50 50 50 50" transform="rotate(135 50 50)" />
+                    <path d="M50 50 Q80 15 85 40 Q50 50 50 50" transform="rotate(225 50 50)" />
+                    <path d="M50 50 Q80 15 85 40 Q50 50 50 50" transform="rotate(315 50 50)" />
+                </g>
+                <circle cx="50" cy="50" r="3" fill="var(--text-gold)" />
+            </svg>
         </div>
 
         <div class="gallery-container">
@@ -145,28 +164,6 @@
     </div>
 
     <script>
-        function createFlower() {
-            const container = document.getElementById('flower-container');
-            const totalDots = 150; 
-            const n = 6; 
-            const d = 1;
-            const k = n / d;
-            
-            for (let i = 0; i < totalDots; i++) {
-                const angle = (i / totalDots) * Math.PI * 2;
-                const r = 110 * Math.cos(k * angle);
-                const x = 125 + r * Math.cos(angle);
-                const y = 125 + r * Math.sin(angle);
-                
-                const dot = document.createElement('div');
-                dot.className = 'dot';
-                dot.style.left = x + 'px';
-                dot.style.top = y + 'px';
-                dot.style.animationDelay = (i * 0.02) + 's, ' + (Math.random() * 2) + 's';
-                container.appendChild(dot);
-            }
-        }
-
         const message = "Terima kasih sudah tetap di sini, mekar bersamaku melalui setiap musim. Mungkin kini memulai dari 0 bahkan dari minus dan semoga kedepannya tetap bersama. Website ini adalah janji bahwa setiap detik bersamamu adalah abadi.";
         let i = 0;
 
@@ -181,13 +178,8 @@
         function openWebsite() {
             const audio = document.getElementById("myAudio");
             
-            // Memastikan musik diputar dari detik 0
             audio.currentTime = 0; 
-            audio.play().then(() => {
-                console.log("Musik diputar dari awal.");
-            }).catch(e => {
-                console.log("Play blocked: ", e);
-            });
+            audio.play().catch(e => console.log("Play blocked"));
 
             document.getElementById("cover").classList.add("cover-opened");
             document.getElementById("main-content").style.opacity = "1";
@@ -195,8 +187,11 @@
 
             // Jalankan typewriter
             setTimeout(typeWriter, 1000);
-            // Munculkan bunga setelah teks mulai jalan sedikit
-            setTimeout(createFlower, 2500);
+            
+            // Munculkan bunga SVG secara halus tanpa membebani prosesor
+            setTimeout(() => {
+                document.getElementById('flower-target').classList.add('visible');
+            }, 1500);
         }
     </script>
 </body>

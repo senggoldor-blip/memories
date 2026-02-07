@@ -103,6 +103,25 @@
 
         .photo img { width: 100%; height: 100%; object-fit: cover; }
 
+        /* --- Game Area Styling --- */
+        #game-area {
+            width: 100%; height: 350px; background: rgba(255,255,255,0.03); 
+            position: relative; overflow: hidden; border: 1px solid var(--text-gold); 
+            border-radius: 15px; margin-top: 20px;
+        }
+
+        #score-board {
+            position: absolute; top: 15px; left: 15px; 
+            color: var(--text-gold); font-size: 1.4rem; z-index: 5;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .game-heart {
+            position: absolute; cursor: pointer; user-select: none;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 35px;
+        }
+
         footer {
             padding: 60px 20px 40px; text-align: center;
             font-size: 0.8rem; letter-spacing: 4px; opacity: 0.6; color: var(--text-gold);
@@ -158,6 +177,15 @@
             <div class="photo"><img src="foto 4.jpeg" alt="Kenangan 4"></div>
         </div>
 
+        <section class="section" style="border-top: 1px solid rgba(239, 191, 59, 0.2); margin-top: 50px;">
+            <h2 style="font-family: 'Cormorant Garamond', serif; color: var(--text-gold); font-size: 2rem; margin-bottom: 10px; font-style: italic;">Tangkap Rasa bahagia</h2>
+            <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 20px; letter-spacing: 1px;">Kumpulkan 10 hati untuk pesan spesial</p>
+            
+            <div id="game-area">
+                <div id="score-board">Skor: 0</div>
+            </div>
+        </section>
+
         <footer>
             TERJAGA DALAM DOA &bull; 2026
         </footer>
@@ -166,6 +194,8 @@
     <script>
         const message = "Terima kasih sudah tetap di sini, mekar bersamaku melalui setiap musim. Mungkin kini memulai dari 0 bahkan dari minus dan semoga kedepannya tetap bersama. Website ini adalah janji bahwa setiap detik bersamamu adalah abadi.";
         let i = 0;
+        let score = 0;
+        let gameActive = false;
 
         function typeWriter() {
             if (i < message.length) {
@@ -173,6 +203,44 @@
                 i++;
                 setTimeout(typeWriter, 70);
             }
+        }
+
+        // Fungsi Game Tangkap Hati
+        function spawnHeart() {
+            if(!gameActive) return;
+
+            const gameArea = document.getElementById('game-area');
+            const heart = document.createElement('div');
+            heart.className = 'game-heart';
+            heart.innerHTML = '❤️';
+            
+            // Posisi acak di area game
+            const x = Math.random() * (gameArea.clientWidth - 50);
+            const y = Math.random() * (gameArea.clientHeight - 50);
+            
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            
+            heart.onclick = function() {
+                score++;
+                document.getElementById('score-board').innerHTML = `Skor: ${score}`;
+                this.style.transform = 'scale(1.8) rotate(20deg)';
+                this.style.opacity = '0';
+                setTimeout(() => this.remove(), 200);
+                
+                if(score === 10) {
+                    setTimeout(() => {
+                        alert("Wait for me until i succeed");
+                    }, 300);
+                }
+            };
+            
+            gameArea.appendChild(heart);
+
+            // Hati hilang sendiri jika tidak diklik
+            setTimeout(() => {
+                if(heart.parentElement) heart.remove();
+            }, 1800);
         }
 
         function openWebsite() {
@@ -188,10 +256,14 @@
             // Jalankan typewriter
             setTimeout(typeWriter, 1000);
             
-            // Munculkan bunga SVG secara halus tanpa membebani prosesor
+            // Munculkan bunga SVG
             setTimeout(() => {
                 document.getElementById('flower-target').classList.add('visible');
             }, 1500);
+
+            // Aktifkan Game
+            gameActive = true;
+            setInterval(spawnHeart, 1200);
         }
     </script>
 </body>

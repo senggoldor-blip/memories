@@ -59,7 +59,7 @@
             font-style: italic; min-height: 140px; line-height: 1.5;
         }
 
-        /* --- New Lightweight SVG Flower --- */
+        /* --- SVG Flower --- */
         .flower-wrapper {
             display: flex; justify-content: center; align-items: center;
             margin-bottom: 40px; opacity: 0; transform: scale(0.8);
@@ -81,9 +81,7 @@
             to { transform: rotate(360deg); }
         }
 
-        .petal {
-            animation: sparkleFlower 3s infinite alternate;
-        }
+        .petal { animation: sparkleFlower 3s infinite alternate; }
 
         @keyframes sparkleFlower {
             0% { opacity: 0.6; stroke-width: 1; }
@@ -103,7 +101,7 @@
 
         .photo img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- Game Area Styling --- */
+        /* --- Game Area --- */
         #game-area {
             width: 100%; height: 350px; background: rgba(255,255,255,0.03); 
             position: relative; overflow: hidden; border: 1px solid var(--text-gold); 
@@ -113,13 +111,34 @@
         #score-board {
             position: absolute; top: 15px; left: 15px; 
             color: var(--text-gold); font-size: 1.4rem; z-index: 5;
-            font-family: 'Inter', sans-serif;
         }
 
         .game-heart {
             position: absolute; cursor: pointer; user-select: none;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            font-size: 35px;
+            transition: transform 0.2s; font-size: 35px;
+        }
+
+        /* --- Custom Modal (Popup Baru) --- */
+        #custom-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 200; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.5s ease;
+        }
+
+        .modal-content {
+            background: var(--bg-color); border: 1px solid var(--text-gold);
+            padding: 40px; border-radius: 20px; text-align: center; max-width: 80%;
+            box-shadow: 0 0 30px var(--gold-glow);
+        }
+
+        .modal-content p {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.8rem;
+            color: var(--text-gold); font-style: italic; margin-bottom: 25px;
+        }
+
+        .close-modal {
+            background: transparent; color: var(--text-white); border: 1px solid var(--text-white);
+            padding: 10px 30px; font-size: 0.9rem; cursor: pointer; letter-spacing: 2px;
         }
 
         footer {
@@ -142,6 +161,13 @@
         <p class="cover-intro">Maret 2025 — Hari ini</p>
         <h2 class="cover-main-text">Perjalanan Kita Dimulai</h2>
         <button class="open-btn" onclick="openWebsite()">BUKA LEMBARAN BARU</button>
+    </div>
+
+    <div id="custom-modal">
+        <div class="modal-content">
+            <p>"Wait for me until i succeed"</p>
+            <button class="close-modal" onclick="closeModal()">Selesai</button>
+        </div>
     </div>
 
     <div id="main-content">
@@ -178,24 +204,17 @@
         </div>
 
         <section class="section" style="border-top: 1px solid rgba(239, 191, 59, 0.2); margin-top: 50px;">
-            <h2 style="font-family: 'Cormorant Garamond', serif; color: var(--text-gold); font-size: 2rem; margin-bottom: 10px; font-style: italic;">Tangkap Rasa bahagia</h2>
+            <h2 style="font-family: 'Cormorant Garamond', serif; color: var(--text-gold); font-size: 2rem; margin-bottom: 10px; font-style: italic;">Tangkap Rasa Sayangku</h2>
             <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 20px; letter-spacing: 1px;">Kumpulkan 10 hati untuk pesan spesial</p>
-            
-            <div id="game-area">
-                <div id="score-board">Skor: 0</div>
-            </div>
+            <div id="game-area"><div id="score-board">Skor: 0</div></div>
         </section>
 
-        <footer>
-            TERJAGA DALAM DOA &bull; 2026
-        </footer>
+        <footer>TERJAGA DALAM DOA &bull; 2026</footer>
     </div>
 
     <script>
         const message = "Terima kasih sudah tetap di sini, mekar bersamaku melalui setiap musim. Mungkin kini memulai dari 0 bahkan dari minus dan semoga kedepannya tetap bersama. Website ini adalah janji bahwa setiap detik bersamamu adalah abadi.";
-        let i = 0;
-        let score = 0;
-        let gameActive = false;
+        let i = 0, score = 0, gameActive = false;
 
         function typeWriter() {
             if (i < message.length) {
@@ -205,63 +224,46 @@
             }
         }
 
-        // Fungsi Game Tangkap Hati
         function spawnHeart() {
             if(!gameActive) return;
-
             const gameArea = document.getElementById('game-area');
             const heart = document.createElement('div');
             heart.className = 'game-heart';
             heart.innerHTML = '❤️';
-            
-            // Posisi acak di area game
-            const x = Math.random() * (gameArea.clientWidth - 50);
-            const y = Math.random() * (gameArea.clientHeight - 50);
-            
-            heart.style.left = x + 'px';
-            heart.style.top = y + 'px';
+            heart.style.left = Math.random() * (gameArea.clientWidth - 50) + 'px';
+            heart.style.top = Math.random() * (gameArea.clientHeight - 50) + 'px';
             
             heart.onclick = function() {
                 score++;
                 document.getElementById('score-board').innerHTML = `Skor: ${score}`;
-                this.style.transform = 'scale(1.8) rotate(20deg)';
-                this.style.opacity = '0';
-                setTimeout(() => this.remove(), 200);
-                
-                if(score === 10) {
-                    setTimeout(() => {
-                        alert("Wait for me until i succeed");
-                    }, 300);
-                }
+                this.remove();
+                if(score === 10) showModal();
             };
-            
             gameArea.appendChild(heart);
+            setTimeout(() => { if(heart.parentElement) heart.remove(); }, 1800);
+        }
 
-            // Hati hilang sendiri jika tidak diklik
-            setTimeout(() => {
-                if(heart.parentElement) heart.remove();
-            }, 1800);
+        function showModal() {
+            const modal = document.getElementById('custom-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.style.opacity = '1', 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('custom-modal');
+            modal.style.opacity = '0';
+            setTimeout(() => modal.style.display = 'none', 500);
         }
 
         function openWebsite() {
             const audio = document.getElementById("myAudio");
-            
             audio.currentTime = 0; 
             audio.play().catch(e => console.log("Play blocked"));
-
             document.getElementById("cover").classList.add("cover-opened");
             document.getElementById("main-content").style.opacity = "1";
             document.body.style.overflow = "auto";
-
-            // Jalankan typewriter
             setTimeout(typeWriter, 1000);
-            
-            // Munculkan bunga SVG
-            setTimeout(() => {
-                document.getElementById('flower-target').classList.add('visible');
-            }, 1500);
-
-            // Aktifkan Game
+            setTimeout(() => { document.getElementById('flower-target').classList.add('visible'); }, 1500);
             gameActive = true;
             setInterval(spawnHeart, 1200);
         }
